@@ -1,0 +1,25 @@
+﻿@page "/"
+@using BlazorControlWork.Pages
+@inject UserService userSer
+<h3>Вход в аккаунт</h3>
+<p><input @bind-value="Login" type="text" placeholder="Введите логин" /> </p>
+<p><input @bind-value="Password"type="password" placeholder="Введите пароль" /></p>
+<p>
+    <button type="button" name="BtnVhod" onclick="Autorization">Войти</button>
+    <button type="button" name="BtnReg" onclick="location.href = '/Registration'" >Регистрация</button>
+</p>
+
+@code {
+    private string? Login;
+    private string? Password;
+
+    private void Autorization()
+    {
+        //if (Login != null && Password != null)
+        //{
+        //    userSer.user = userSer.UserLogin(Login);
+        //    Login = null;
+        //    Password == null;
+        //}
+    }
+}

@@ -1,0 +1,46 @@
+﻿@page "/Registration"
+@inject User user;
+@inject UserService userSer;
+@namespace BlazorControlWork.Pages
+<h3>Регистрация</h3>
+<p><input @bind-value="Login"type="text" placeholder="Введите логин"/></p>
+<p><input @bind-value="Password"type="password" placeholder="Введите пароль"/></p>
+<p><input @bind-value="RepPassword"type="password" placeholder="Подтверждение пароля" /></p>
+<p><input @bind-value="Fname"type="text" placeholder="Введите Имя"/></p>
+<p><input @bind-value="Lname"type="text" placeholder="Введите Фамилию" /></p>
+<p><input @bind-value="Email"type="text" placeholder="Введите почту" /></p>
+<p>
+    <button type="button" name="BtnRegg" @onclick="Reg">Зарегистрироваться</button>
+        <button type="button" name="Btnhome" onclick="location.href = '/'">Вернуться на главную</button>
+</p>
+@code {
+    private string? Login;
+    private string? Password;
+    private string? RepPassword;
+    private string? Fname;
+    private string? Lname;
+    private string? Email;
+
+    private void Reg()
+    {
+        if (Login != null || Password != null || Fname != null || Lname != null || Email != null || RepPassword != null)
+        {
+            if (Password == RepPassword && Login != null || Password != null)
+            {
+                user = new User()
+                {
+                    Login = Login,
+                    Password = Password,
+                    FName = Fname,
+                    LName = Lname,
+                    Email = Email
+                };
+                
+                userSer.AddToDb(user);
+
+
+            }
+        }
+        
+    }
+}
