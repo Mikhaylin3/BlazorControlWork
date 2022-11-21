@@ -1,17 +1,34 @@
 ﻿@page "/Registration"
 @inject User user;
 @inject UserService userSer;
+@inject NavigationManager manager
 @namespace BlazorControlWork.Pages
 <h3>Регистрация</h3>
-<p><input @bind-value="Login"type="text" placeholder="Введите логин"/></p>
-<p><input @bind-value="Password"type="password" placeholder="Введите пароль"/></p>
-<p><input @bind-value="RepPassword"type="password" placeholder="Подтверждение пароля" /></p>
+<p><input @bind-value="Login"type="text"@onfocusout=CheckError placeholder="Введите логин"/></p>
+@if (ErrorInputLogin)
+{
+      <br><div class="alert alert-danger" role="alert">Такой логин уже есть!</div>
+}
+<p><input @bind-value="Password"type="password"  placeholder="Введите пароль"/></p>
+
+<p><input @bind-value="RepPassword"type="password"@onfocusout=CheckError placeholder="Подтверждение пароля" /></p>
+@if (ErrorPassword)
+{
+      <br><div class="alert alert-danger" role="alert">Неправильный пароль!</div>
+}
+
 <p><input @bind-value="Fname"type="text" placeholder="Введите Имя"/></p>
 <p><input @bind-value="Lname"type="text" placeholder="Введите Фамилию" /></p>
 <p><input @bind-value="Email"type="text" placeholder="Введите почту" /></p>
+@if (ErrorData)
+{
+          <br>
+
+    <div class="alert alert-danger" role="alert">Заполните все данные.</div>
+}
 <p>
     <button type="button" name="BtnRegg" @onclick="Reg">Зарегистрироваться</button>
-        <button type="button" name="Btnhome" onclick="location.href = '/'">Вернуться на главную</button>
+    <button type="button" name="Btnhome" onclick="location.href = '/'">Вернуться на главную</button>
 </p>
 @code {
     private string? Login;
@@ -20,14 +37,14 @@
     private string? Fname;
     private string? Lname;
     private string? Email;
-
+    bool ErrorPassword = false;
+    bool ErrorData = false;
+    bool ErrorInputLogin = false;
     private void Reg()
     {
-        if (Login != null || Password != null || Fname != null || Lname != null || Email != null || RepPassword != null)
+        if (Login != null && Password != null && Fname != null && Lname != null && Email != null && RepPassword != null)
         {
-            if (Password == RepPassword && Login != null || Password != null)
-            {
-                user = new User()
+            user = new User()
                 {
                     Login = Login,
                     Password = Password,
@@ -35,12 +52,40 @@
                     LName = Lname,
                     Email = Email
                 };
-                
-                userSer.AddToDb(user);
 
-
-            }
+            userSer.AddToDb(user);
+            manager.NavigateTo("/");
+        }
+        else
+        {
+            ErrorData = true;
+            return;
         }
         
+    }
+    private void CheckError()
+    {
+
+            var userse = UserService.FindAll();
+            foreach (var user in userse)
+            {
+                if (Login == user.Login)
+                {
+                ErrorInputLogin = true;
+                }
+                else
+                {
+                ErrorInputLogin = false;
+                }
+            }
+            if (Password != RepPassword)
+            {
+                ErrorPassword = true;
+            }
+            else
+            {
+                ErrorPassword = false;
+
+            }
     }
 }

@@ -9,7 +9,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<User>();
-
+builder.Services.AddSingleton<FileSystemService>();
+builder.Services.AddSingleton<UnitService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -30,3 +31,4 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 app.Run();
+builder.Services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });

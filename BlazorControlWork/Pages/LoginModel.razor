@@ -1,2 +1,19 @@
-﻿@page "/counter"
+﻿@page "/menu"
+@inject UserService userSer
+
+@if (user != null)
+{
+        <h1>Hello, @user.Login!</h1>
+}
+
+@code {
+    private User user;
+
+    protected override void OnInitialized()
+    {
+        user = userSer.GetUser();
+    }
+}
+
+
 

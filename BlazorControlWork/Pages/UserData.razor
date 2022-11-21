@@ -1,0 +1,11 @@
+﻿@page "/user"
+@inject UnitService unitSer
+@using BlazorControlWork.Data
+@using BlazorControlWork.Pages
+@{
+    if (unitSer.GetUnits().Count == 0)
+    {
+        unitSer.SetUnits();
+    }
+}
+<Component units="unitSer.GetUnits()"></Component>

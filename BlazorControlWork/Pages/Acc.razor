@@ -1,6 +1,94 @@
-﻿@page "/Account"
-<h3>Account</h3>
+﻿@page "/files"
+
+@using Microsoft.Extensions.Logging
+@inject IWebHostEnvironment Environment
+
+<h3>Load file</h3>
+
+<p>
+    
+    <label>
+        Max load files:
+        <input type="number" @bind-value="maxFiles"/>
+    </label>
+</p>
+
+<p>
+    <label>
+        Load you files:
+        <InputFile OnChange="LoadFiles" multiple />
+    </label>
+</p>
+
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Size:</th>
+                <th>Type:</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var file in loadFile)
+            {
+                <tr>
+                    <td>@file.Name</td>
+                    <td>@file.Size</td>
+                    <td>@file.ContentType</td>
+                    <td>
+                        <button type="button" class="btn btn-success" @onclick="() => AddToDB(file)">Add to DB</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@if(loadFile.Count ==1)
+{
+    <img src="@T"/>
+}
 
 @code {
+    private string T = "";
+    private List<IBrowserFile> loadFile = new List<IBrowserFile>();
+    private bool isLoading;
+    int maxFiles = 1;
 
+    private async Task LoadFiles(InputFileChangeEventArgs e)
+    {
+        isLoading = true;
+        if (e.FileCount > maxFiles || e.FileCount < maxFiles)
+            return;
+        foreach (var file in e.GetMultipleFiles(maxFiles))
+        {
+            if(e.FileCount ==1)
+            {
+                T = "unsafe\\"+file.Name;
+            }
+            loadFile.Add(file);
+            var path = Path.Combine(Environment.ContentRootPath,
+                    "wwwroot", "unsafe",
+                    file.Name);
+            await using FileStream fs = new(path, FileMode.Create);
+            await file.OpenReadStream(10000000000000).CopyToAsync(fs);
+        }
+        isLoading = false;
+    }
+
+    private void AddToDB(IBrowserFile file)
+    {
+        FileSystemService fs = new FileSystemService();
+        string path = Path.Combine(Environment.ContentRootPath,
+                        "wwwroot", "unsafe",
+                        file.Name);
+        fs.UploadImageToDb(file, path);
+        loadFile.Remove(file);
+    }
 }

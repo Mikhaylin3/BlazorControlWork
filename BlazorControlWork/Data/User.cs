@@ -4,7 +4,10 @@ namespace BlazorControlWork.Data
 {
     public class User
     {
+        ObjectId _id;
+
         [BsonId]
+        [BsonIgnoreIfDefault]
         [BsonIgnoreIfNull]
         public string? Login { get; set; }
         [BsonIgnoreIfNull]
@@ -15,5 +18,12 @@ namespace BlazorControlWork.Data
         public string? LName { get; set; }
         [BsonIgnoreIfNull]
         public string? Email { get; set; }
+        [BsonIgnoreIfNull]
+        public string? Photo { get; set; }
+        
+        public User()
+        {
+            Photo = String.Empty;
+        }
     }
 }
